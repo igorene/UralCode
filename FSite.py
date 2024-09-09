@@ -33,8 +33,8 @@ def init_db():
 
 def get_db():
     if not hasattr(g, 'sqlite_db'):
-        g.link_db = connect_db()
-    return g.link_db
+        g.sqlite_db = connect_db()
+    return g.sqlite_db
 
 def create_db():
     db = get_db()
@@ -46,7 +46,7 @@ def create_db():
 @app.teardown_appcontext
 def close_db(error):
     if  hasattr(g, 'sqlite_db'):
-        g.link_db.close()
+        g.sqlite_db.close()
 
 
 
@@ -63,13 +63,7 @@ def add_entry():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    db.execute('''insert into entries 
-        (id, name, phone, region, sity, description, category, specialization) 
-        values (?, ?, ?, ?, ?, ?, ?, ?)''',
-        [request.form['id'], request.form['name'],
-        request.form['phone'], request.form['region'],
-        request.form['sity'], request.form['description'],
-        request.form['category'], request.form['specialization']])
+    db.execute('insert into corp (corporation, city) values (?, ?)', (request.form['corporation'], request.form['city']))
     db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
@@ -85,7 +79,7 @@ def login():
         else:
             session['logged_in'] = True
             flash('You were logged in')
-            return redirect(url_for('show_entries'))
+            return redirect(url_for('add_entry'))
     return render_template('login.html', error=error)
 
 @app.route('/logout')
@@ -94,5 +88,7 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('show_entries'))
 
-if __name__ == '__main__':
-    app.run() # type: ignore
+init_db()
+
+#if __name__ == '__main__':
+#    app.run() # type: ignore
