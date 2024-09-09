@@ -3,17 +3,6 @@ import sqlite3
 import os
 
 
-
-
-DATABASE = '/tmp/database.db'
-DEBUG = True
-SECRET_KEY = 'dfmkfml;vm,l;'
-USERNAME = 'admin'
-PASSWORD = '1111'
-
-
-
-
 app = Flask(__name__)
 app.config.from_object(__name__)
 
